@@ -1,7 +1,6 @@
 package com.example.studytracker.service;
 
 import com.example.studytracker.entity.MUser;
-import com.example.studytracker.form.LoginForm;
 import com.example.studytracker.form.UserRegistrationForm;
 import com.example.studytracker.repository.UserRepository;
 
@@ -34,13 +33,6 @@ public class UserService {
      */
     public boolean isUserIdAvailable(String userId) {
         return !userRepository.existsById(userId);
-    }
-
-    /**
-     * ログイン
-     */
-    public MUser login(LoginForm loginForm) {
-        return userRepository.findByIdAndPassword(loginForm.getUserId(), loginForm.getPassword());
     }
 
 }

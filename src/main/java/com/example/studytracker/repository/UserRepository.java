@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UserRepository extends JpaRepository<MUser, String> {
-    @Query("SELECT u FROM MUser u WHERE u.id = :id AND u.password = :password")
-    MUser findByIdAndPassword(String id, String password);
 }
