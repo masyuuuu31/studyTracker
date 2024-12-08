@@ -3,19 +3,20 @@ body {
     background-color: #f8f9fa; /* 背景色 */
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: 100vh; /* 高さを画面全体に */
     margin: 0;
-    padding: 20px;
+    padding: 0; /* bodyの余白をリセット */
 }
 
+/* コンテンツエリア */
 .container {
     max-width: 400px; /* 最大幅を調整 */
-    margin: 0 auto; /* 中央寄せ */
+    margin: auto; /* 中央寄せ */
     background-color: #fff; /* 白背景 */
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 影を追加 */
-    flex: 1; /* コンテンツエリアを調整 */
+    flex: 1; /* メインコンテンツを伸縮可能に */
 }
 
 h2 {
@@ -44,14 +45,15 @@ button.btn {
 
 /* フッターのスタイル */
 footer {
-    position: relative;
-    bottom: 0;
     width: 100%;
     background-color: rgba(0, 0, 0, 0.05);
     padding: 10px 0;
     text-align: center;
     font-size: 0.9rem;
     border-top: 1px solid #ddd; /* フッター上部にボーダー */
+    margin-top: auto; /* フッターを下部に押し下げる */
+    position: sticky;
+    bottom: 0;
 }
 
 footer a {
