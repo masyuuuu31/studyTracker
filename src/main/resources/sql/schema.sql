@@ -35,3 +35,7 @@ CREATE TABLE IF NOT EXISTS sub_task (
      FOREIGN KEY (author_id) REFERENCES m_user(user_id),
      FOREIGN KEY (target_id) REFERENCES main_task(id)
 );
+
+
+ALTER TABLE m_user 
+ADD authority SMALLINT NOT NULL AFTER password;
