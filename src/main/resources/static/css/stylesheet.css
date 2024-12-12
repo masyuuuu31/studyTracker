@@ -1,0 +1,36 @@
+/* 背景とレイアウト設定 */
+body {
+    background-color: #f8f9fa;
+    display: flex;                /* フレックスボックスを有効化 */
+    justify-content: center;      /* 水平方向に中央揃え */
+    align-items: center;          /* 垂直方向に中央揃え */
+    margin: 0;                    /* デフォルトの余白をリセット */
+}
+
+/* ログインフォームのスタイル */
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 0 15px; /* 左右のマージンを追加 */
+    margin-top: 300px;
+}
+
+/* ヘッダーのスタイル */
+.login-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* フォーム内のリンクスタイル */
+.login-container p a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.login-container p a:hover {
+    text-decoration: underline;
+}
