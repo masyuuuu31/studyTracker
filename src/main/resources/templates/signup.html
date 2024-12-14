@@ -9,7 +9,13 @@
 <div class="container">
     <h2 class="mt-5 mb-3">新規会員登録</h2>
 
-    <form th:action="@{/signup}" method="post" th:method="post" th:object="${userRegistrationForm}">
+    <!-- グローバルエラーメッセージ領域を追加 -->
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <form th:action="@{/signup}" method="post" th:object="${userRegistrationForm}">
         <div class="mb-3">
             <label for="usernameFormControlInput" class="form-label">User name</label>
             <input type="text" class="form-control" id="usernameFormControlInput" placeholder="sample user" th:field="*{userName}" th:errorclass="is-invalid">
