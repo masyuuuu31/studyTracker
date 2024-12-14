@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.studytracker.exception.DuplicateUserException;
-import com.example.studytracker.form.UserLoginForm;
-import com.example.studytracker.form.UserRegistrationForm;
+import com.example.studytracker.form.auth.UserLoginForm;
+import com.example.studytracker.form.auth.UserRegistrationForm;
 import com.example.studytracker.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -96,6 +96,7 @@ public class AuthController {
      * @param form バリデーション対象のフォーム
      * @param result バリデーション結果
      * @return バリデーション結果に応じた遷移先
+     * @author Ritsu.Inoue
      */
     @PostMapping("/validate-login")
     public String validateLogin(@Validated UserLoginForm form, BindingResult result) {
