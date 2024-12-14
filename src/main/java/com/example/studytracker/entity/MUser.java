@@ -7,6 +7,12 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+
+/**
+ * ユーザー情報を管理するエンティティクラス
+ * データベースのm_userテーブルとマッピングする
+ * @author Ritsu.Inoue
+ */
 @Data
 @Entity
 @Table(name = "m_user")
@@ -22,6 +28,9 @@ public class MUser {
 
     @Column(name = "password", nullable = false)
     private String password;
+
+    @Column(name = "authority")
+    private Integer authority;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

@@ -14,14 +14,16 @@
             メールアドレスまたはパスワードが正しくありません。
         </div>
 
-        <form th:action="@{/login}" method="post" th:method="post">
+        <form th:action="@{/validate-login}" method="post" th:object="${userLoginForm}">
             <div class="mb-5">
                 <label for="emailFormControlInput" class="form-label">Email address</label>
-                <input type="email" class="form-control" id="emailFormControlInput" placeholder="name@example.com" name="userId">
+                <input type="email" class="form-control" id="emailFormControlInput" placeholder="name@example.com" th:field="*{userId}" th:errorclass="is-invalid">
+                <p class="invalid-feedback" th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}"></p>
             </div>
             <div class="mb-5">
                 <label for="inputPassword5" class="form-label">Password</label>
-                <input type="password" id="inputPassword5" class="form-control" aria-labelledby="passwordHelpBlock" name="password">
+                <input type="password" id="inputPassword5" class="form-control" aria-labelledby="passwordHelpBlock" th:field="*{password}" th:errorclass="is-invalid">
+                <p class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
             </div>
             <div class="mb-5">
                 <button type="submit" class="btn btn-secondary">ログイン</button>

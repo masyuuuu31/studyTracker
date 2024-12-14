@@ -6,14 +6,11 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class UserRegistrationForm {
+public class UserLoginForm {
 
     @NotBlank
     @Email
     private String userId;
-
-    @NotBlank
-    private String userName;
 
     @NotBlank
     @Size(min = 12, max = 128)
