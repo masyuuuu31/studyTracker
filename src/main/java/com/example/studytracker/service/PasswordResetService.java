@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import org.hibernate.sql.ast.tree.predicate.BooleanExpressionPredicate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.studytracker.entity.MUser;
 import com.example.studytracker.entity.PasswordResetToken;
+import com.example.studytracker.exception.InvalidTokenException;
 import com.example.studytracker.repository.PasswordResetRepository;
 import com.example.studytracker.repository.UserRepository;
 
@@ -43,10 +43,39 @@ public class PasswordResetService {
         }
 
         String token = generateUniqueToken();
+        
+        // トークンエンティティの作成と保存
+        PasswordResetToken resetToken = new PasswordResetToken();
+        resetToken.setToken(token);
+        resetToken.setUser(mUser);
+        resetToken.setExpiryDate(LocalDateTime.now().plusHours(TOKEN_VALID_HOURS));
+        
+        passwordResetRepository.save(resetToken);
 
-        return null;
+        return token;
     }
     
+    @Transactional
+    public void resetPassword(String token, String newPassword) {
+        // 有効なトークンを取得
+        PasswordResetToken resetToken = passwordResetRepository.findByToken(token)
+            .orElseThrow(
+                () -> new InvalidTokenException("無効なトークンです。")
+            );
+        
+        // トークンの有効期限をチェック
+        if (!isValidToken(resetToken.getExpiryDate())) {
+            throw new InvalidTokenException("トークンの有効期限が切れています。");
+        }
+        
+        // パスワードの更新
+        MUser muser = resetToken.getUser();
+        muser.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(muser);
+        
+        // トークンを削除
+        passwordResetRepository.deleteById(resetToken.getId());
+    }
 
     private String generateUniqueToken() {
         String token;
@@ -61,7 +90,6 @@ public class PasswordResetService {
         return token;
     }
 
-    
     private boolean isValidToken(LocalDateTime expiryDate) {
         
         // 処理日時が有効期限内の場合

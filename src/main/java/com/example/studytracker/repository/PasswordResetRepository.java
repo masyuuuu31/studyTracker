@@ -17,7 +17,7 @@ import com.example.studytracker.entity.PasswordResetToken;
  * @author Ritsu.Inoue
  */
 @Repository
-public interface PasswordResetRepository extends JpaRepository<PasswordResetRepository, Long>{
+public interface PasswordResetRepository extends JpaRepository<PasswordResetToken, Long>{
 
     /**
      * トークン文字列に一致するパスワードリセットトークンを取得する
