@@ -1,6 +1,7 @@
 package com.example.studytracker.auth;
 
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -10,12 +11,19 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.studytracker.exception.DuplicateUserException;
+import com.example.studytracker.form.auth.PasswordResetEmailForm;
+import com.example.studytracker.form.auth.PasswordResetForm;
 import com.example.studytracker.form.auth.UserLoginForm;
 import com.example.studytracker.form.auth.UserRegistrationForm;
+import com.example.studytracker.service.PasswordResetService;
 import com.example.studytracker.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
+
+
 
 
 @Slf4j
@@ -29,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthController {
 
     private final UserService userService;
+    private final PasswordResetService passwordResetService;
 
     /**
      * 新規会員登録画面を表示する
@@ -108,7 +117,62 @@ public class AuthController {
         
         return "forward:/login";
     }
+
+    /**
+     * パスワードリセット用メールアドレス入力画面を表示する
+     * 
+     * @param form メールアドレス入力フォーム
+     * @return パスワードリセット画面のビュー名
+     * @author Ritsu.Inoue
+     */
+    @GetMapping("/password/reset")
+    public String showPasswordResetForm(@ModelAttribute PasswordResetEmailForm form) {
+        return "resetting";
+    }
     
+    /**
+     * パスワードリセット用トークンを発行する
+     * 
+     * @param form メールアドレス入力フォーム
+     * @param result バリデーション結果
+     * @param model ビューに渡すモデル
+     * @return 処理結果に応じた遷移先のビュー名
+     *         - バリデーションエラー時: パスワードリセット画面
+     *         - ユーザー未存在時: パスワードリセット画面（エラーメッセージ付き）
+     *         - 成功時: トークン表示画面
+     * @author Ritsu.Inoue
+     */
+    @PostMapping("/password/reset")
+    public String createPasswordResetToken(@Validated PasswordResetEmailForm form, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return showPasswordResetForm(form);
+        }
+
+        try {
+            String email = form.getEmail();
+            String token = passwordResetService.createPasswordResetToken(email);
+            model.addAttribute("email", email);
+            model.addAttribute("resetToken", token);
+            return "TODO";
+        } catch(UsernameNotFoundException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return showPasswordResetForm(form);
+        } 
+    }
+    
+    /**
+     * パスワード再設定画面を表示する
+     * 
+     * @param form パスワード再設定フォーム
+     * @param token パスワードリセットトークン
+     * @param model ビューに渡すモデル
+     * @return パスワード再設定画面のビュー名
+     * @author Ritsu.Inoue
+     */
+    @GetMapping("/password/reset/new")  // URLからtokenを除去
+    public String showResetPasswordForm(@ModelAttribute PasswordResetForm form, @RequestParam String token, Model model) {    
+    return "password/reset-password";
+    }
 
     /**
      * テスト用のユーザー一覧画面を表示する

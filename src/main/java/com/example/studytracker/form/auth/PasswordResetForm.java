@@ -19,6 +19,4 @@ public class PasswordResetForm {
     @NotBlank
     @Size(min = 12, max = 128)
     private String confirmPassword;
-
-    private String token;
 }

@@ -17,6 +17,11 @@ import com.example.studytracker.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * パスワードリセット機能のサービスクラス
+ * トークンの生成、パスワードの再設定、トークンの管理を行う
+ * @author Ritsu.Inoue
+ */
 @Service
 @RequiredArgsConstructor
 public class PasswordResetService {
@@ -25,9 +30,18 @@ public class PasswordResetService {
     private final PasswordResetRepository passwordResetRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // トークン有効期限
+    /** トークンの有効期限（時間） */
     private static final int TOKEN_VALID_HOURS = 24;
 
+    /**
+     * パスワードリセット用のトークンを生成する
+     * 既存の有効なトークンは削除される
+     * 
+     * @param userId ユーザーID
+     * @return 生成されたトークン文字列
+     * @throws UsernameNotFoundException ユーザーが存在しない場合
+     * @author Ritsu.Inoue
+     */
     @Transactional
     public String createPasswordResetToken(String userId) {
         // 正しいユーザーIDかチェック
@@ -36,12 +50,13 @@ public class PasswordResetService {
         
         // 既にユーザーが保持中の有効トークンを削除
         List<PasswordResetToken> tokens = passwordResetRepository.findByUserId(userId);
-        for(PasswordResetToken token : tokens) {
+        for (PasswordResetToken token : tokens) {
             if (isValidToken(token.getExpiryDate())) {
                 passwordResetRepository.deleteById(token.getId());
             }
         }
 
+        // 新しいトークンを生成
         String token = generateUniqueToken();
         
         // トークンエンティティの作成と保存
@@ -55,13 +70,19 @@ public class PasswordResetService {
         return token;
     }
     
+    /**
+     * パスワードを再設定する
+     * 
+     * @param token パスワードリセット用トークン
+     * @param newPassword 新しいパスワード
+     * @throws InvalidTokenException トークンが無効な場合
+     * @author Ritsu.Inoue
+     */
     @Transactional
     public void resetPassword(String token, String newPassword) {
         // 有効なトークンを取得
         PasswordResetToken resetToken = passwordResetRepository.findByToken(token)
-            .orElseThrow(
-                () -> new InvalidTokenException("無効なトークンです。")
-            );
+            .orElseThrow(() -> new InvalidTokenException("無効なトークンです。"));
         
         // トークンの有効期限をチェック
         if (!isValidToken(resetToken.getExpiryDate())) {
@@ -77,27 +98,29 @@ public class PasswordResetService {
         passwordResetRepository.deleteById(resetToken.getId());
     }
 
+    /**
+     * 重複しないトークンを生成する
+     * 
+     * @return ユニークなトークン文字列
+     * @author Ritsu.Inoue
+     */
     private String generateUniqueToken() {
         String token;
-        
         do {
-            // ランダムなトークンを生成
             token = UUID.randomUUID().toString();
-    
-            // トークンが既に存在している場合は再生成
         } while (passwordResetRepository.findByToken(token).isPresent());
         
         return token;
     }
 
+    /**
+     * トークンの有効期限をチェックする
+     * 
+     * @param expiryDate 有効期限
+     * @return 有効期限内の場合はtrue
+     * @author Ritsu.Inoue
+     */
     private boolean isValidToken(LocalDateTime expiryDate) {
-        
-        // 処理日時が有効期限内の場合
-        if (LocalDateTime.now().isBefore(expiryDate)) {
-            return true;
-        }else {
-            return false;
-        }
+        return LocalDateTime.now().isBefore(expiryDate);
     }
-
 }
