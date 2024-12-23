@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>パスワード再設定</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">ぽちスタ</a>
+        </div>
+    </nav>
+
+    <!-- メインコンテンツ -->
+    <div class="container">
+        <h2 class="mt-5 mb-5">パスワード再設定</h2>
+
+        <!-- エラーメッセージ -->
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- メールアドレス表示 -->
+        <div class="mb-4">
+            <label class="form-label">メールアドレス</label>
+            <p class="form-control-plaintext" th:text="${email}"></p>
+        </div>
+
+        <!-- パスワード再設定フォーム -->
+        <form th:action="@{/password/reset/confirm}" method="post" th:object="${passwordResetForm}">
+            <input type="hidden" th:field="${token}">
+            
+            <div class="mb-4">
+                <label for="password" class="form-label">新しいパスワード</label>
+                <input type="password" 
+                       class="form-control" 
+                       id="password"
+                       th:field="*{password}"
+                       th:errorclass="is-invalid">
+                <div class="form-text">8文字以上20文字以下で入力してください</div>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+            </div>
+
+            <div class="mb-5">
+                <label for="confirmPassword" class="form-label">新しいパスワード（確認）</label>
+                <input type="password" 
+                       class="form-control" 
+                       id="confirmPassword"
+                       th:field="*{confirmPassword}"
+                       th:errorclass="is-invalid">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-secondary">パスワードを変更</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- フッター -->
+    <footer class="bg-light text-center text-lg-start mt-5">
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
+            © 2024 ぽちスタ. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

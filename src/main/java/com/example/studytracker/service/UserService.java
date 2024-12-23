@@ -2,7 +2,7 @@ package com.example.studytracker.service;
 
 import com.example.studytracker.entity.MUser;
 import com.example.studytracker.exception.DuplicateUserException;
-import com.example.studytracker.form.UserRegistrationForm;
+import com.example.studytracker.form.auth.UserRegistrationForm;
 import com.example.studytracker.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,7 @@ public class UserService {
         String encodedPass;
 
         // ユーザーID重複チェック
-        if (!isUserIdAvailable(userId)) {
+        if (userRepository.existsById(userId)) {
             throw new DuplicateUserException("既に登録済みのメールアドレスです。");
         } 
 
@@ -53,26 +53,13 @@ public class UserService {
         encodedPass = passwordEncoder.encode(form.getPassword());
         mUser.setPassword(encodedPass);
 
-        // 権限
+        // 権限 : 一般
         mUser.setAuthority(1);
 
         // 登録実行
         userRepository.save(mUser);
         return true;
     }
-
-    /**
-     * 指定されたユーザーIDが使用可能か確認する
-     * すでに存在するユーザーIDの場合はfalseを返す
-     * 
-     * @param userId チェック対象のユーザーID
-     * @return ユーザーIDが使用可能な場合はtrue、すでに存在する場合はfalse
-     * @author Ritsu.Inoue
-     */
-    public boolean isUserIdAvailable(String userId) {
-        return !userRepository.existsById(userId);
-    }
-
 
     /**
      * 全ユーザーを取得する
