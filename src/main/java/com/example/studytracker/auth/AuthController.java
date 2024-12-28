@@ -2,6 +2,7 @@ package com.example.studytracker.auth;
 
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.csrf.InvalidCsrfTokenException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.studytracker.exception.DuplicateUserException;
+import com.example.studytracker.exception.PasswordMismatchException;
 import com.example.studytracker.form.auth.PasswordResetEmailForm;
 import com.example.studytracker.form.auth.PasswordResetForm;
 import com.example.studytracker.form.auth.UserLoginForm;
@@ -20,9 +22,6 @@ import com.example.studytracker.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestBody;
-
 
 
 
@@ -48,7 +47,7 @@ public class AuthController {
      */
     @GetMapping("/signup")
     public String signup(@ModelAttribute UserRegistrationForm form) {
-        return "signup";
+        return "auth/signup";
     }
 
     /**
@@ -95,7 +94,7 @@ public class AuthController {
      */
     @GetMapping("/login")
     public String login(@ModelAttribute UserLoginForm form) {
-        return "login";
+        return "auth/login";
     }
 
     /**
@@ -127,7 +126,7 @@ public class AuthController {
      */
     @GetMapping("/password/reset")
     public String showPasswordResetForm(@ModelAttribute PasswordResetEmailForm form) {
-        return "resetting";
+        return "auth/pass/resetting";
     }
     
     /**
@@ -150,10 +149,17 @@ public class AuthController {
 
         try {
             String email = form.getEmail();
+            // tokenを作成
             String token = passwordResetService.createPasswordResetToken(email);
-            model.addAttribute("email", email);
-            model.addAttribute("resetToken", token);
-            return "TODO";
+            
+            PasswordResetForm passwordResetForm = new PasswordResetForm();
+            passwordResetForm.setEmail(email);
+            passwordResetForm.setToken(token);
+
+            model.addAttribute("passwordResetForm", passwordResetForm);
+
+            // パスワード再設定画面へ遷移
+            return "auth/pass/resettingPass";
         } catch(UsernameNotFoundException e) {
             model.addAttribute("errorMessage", e.getMessage());
             return showPasswordResetForm(form);
@@ -161,18 +167,52 @@ public class AuthController {
     }
     
     /**
-     * パスワード再設定画面を表示する
+     * パスワードの再設定を実行する
      * 
-     * @param form パスワード再設定フォーム
-     * @param token パスワードリセットトークン
+     * @param form パスワード再設定フォーム（トークン、メールアドレス、新パスワード情報を含む）
+     * @param result バリデーション結果
      * @param model ビューに渡すモデル
-     * @return パスワード再設定画面のビュー名
+     * @return 処理結果に応じた遷移先のビュー名
+     *         - バリデーションエラー時: パスワード再設定画面（フォーム値を保持）
+     *         - パスワード不一致時: パスワード再設定画面（エラーメッセージ付き）
+     *         - トークン無効時: パスワードリセット初期画面
+     *         - 成功時: ログイン画面
      * @author Ritsu.Inoue
      */
-    @GetMapping("/password/reset/new")  // URLからtokenを除去
-    public String showResetPasswordForm(@ModelAttribute PasswordResetForm form, @RequestParam String token, Model model) {    
-    return "password/reset-password";
+    @PostMapping("/password/reset/new")
+    public String postMethodName(@Validated PasswordResetForm form, BindingResult result, Model model) {
+        // バリデーションエラーチェック
+        if (result.hasErrors()) {
+        // フォームオブジェクトを保持して再表示
+        model.addAttribute("passwordResetForm", form);
+        return "auth/pass/resettingPass";
+        };
+
+        try {
+            // パスワード再設定処理
+            passwordResetService.resetPassword(form);
+
+            // 成功時はログイン画面にリダイレクト
+            return "redirect:/login";
+        } catch(PasswordMismatchException e) {
+            // エラーメッセージを設定
+            model.addAttribute("errorMessage", e.getMessage());
+            // フォームオブジェクトを保持して再表示
+            model.addAttribute("passwordResetForm", form);
+            return "auth/pass/resettingPass";
+        } catch(InvalidCsrfTokenException e) {
+            // トークンが無効の場合は最初からやり直し
+            model.addAttribute("errorMessage", e.getMessage());
+            return "redirect:/password/reset";
+            
+        } catch(Exception e) {
+            // 想定外のエラー：エラーログを出力してエラーページへ遷移
+            log.error("ユーザー登録処理でエラーが発生しました。", e);
+            // TODO
+            return null;
+        }
     }
+    
 
     /**
      * テスト用のユーザー一覧画面を表示する

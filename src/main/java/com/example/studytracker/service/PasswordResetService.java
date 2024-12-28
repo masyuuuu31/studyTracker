@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.studytracker.entity.MUser;
 import com.example.studytracker.entity.PasswordResetToken;
 import com.example.studytracker.exception.InvalidTokenException;
+import com.example.studytracker.exception.PasswordMismatchException;
+import com.example.studytracker.form.auth.PasswordResetForm;
 import com.example.studytracker.repository.PasswordResetRepository;
 import com.example.studytracker.repository.UserRepository;
 
@@ -73,25 +75,29 @@ public class PasswordResetService {
     /**
      * パスワードを再設定する
      * 
-     * @param token パスワードリセット用トークン
-     * @param newPassword 新しいパスワード
+     * @param form パスワード再設定用フォームobj
      * @throws InvalidTokenException トークンが無効な場合
      * @author Ritsu.Inoue
      */
     @Transactional
-    public void resetPassword(String token, String newPassword) {
+    public void resetPassword(PasswordResetForm form) {
         // 有効なトークンを取得
-        PasswordResetToken resetToken = passwordResetRepository.findByToken(token)
+        PasswordResetToken resetToken = passwordResetRepository.findByToken(form.getToken())
             .orElseThrow(() -> new InvalidTokenException("無効なトークンです。"));
         
         // トークンの有効期限をチェック
         if (!isValidToken(resetToken.getExpiryDate())) {
             throw new InvalidTokenException("トークンの有効期限が切れています。");
         }
+
+        // パスワード一致確認
+        if (!form.getPassword().equals(form.getConfirmPassword())) {
+            throw new PasswordMismatchException("パスワードが一致しません。");
+        }
         
         // パスワードの更新
         MUser muser = resetToken.getUser();
-        muser.setPassword(passwordEncoder.encode(newPassword));
+        muser.setPassword(passwordEncoder.encode(form.getPassword()));
         userRepository.save(muser);
         
         // トークンを削除

@@ -28,12 +28,13 @@
         <!-- メールアドレス表示 -->
         <div class="mb-4">
             <label class="form-label">メールアドレス</label>
-            <p class="form-control-plaintext" th:text="${email}"></p>
+            <p class="form-control-plaintext" th:text="${passwordResetForm.email}"></p>
         </div>
 
         <!-- パスワード再設定フォーム -->
-        <form th:action="@{/password/reset/confirm}" method="post" th:object="${passwordResetForm}">
-            <input type="hidden" th:field="${token}">
+        <form th:action="@{/password/reset/new}" method="post" th:object="${passwordResetForm}">
+            <input type="hidden" th:field="*{token}">
+            <input type="hidden" th:field="*{email}">
             
             <div class="mb-4">
                 <label for="password" class="form-label">新しいパスワード</label>
