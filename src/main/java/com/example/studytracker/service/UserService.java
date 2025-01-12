@@ -1,5 +1,7 @@
 package com.example.studytracker.service;
 
+import com.example.studytracker.auth.CustomUserDetails;
+import com.example.studytracker.constant.UserAuthority;
 import com.example.studytracker.entity.MUser;
 import com.example.studytracker.exception.DuplicateUserException;
 import com.example.studytracker.form.auth.UserRegistrationForm;
@@ -9,9 +11,13 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import org.springframework.security.core.Authentication;
 
 /**
  * ユーザー関連のビジネスロジックを提供するサービスクラス
@@ -54,7 +60,7 @@ public class UserService {
         mUser.setPassword(encodedPass);
 
         // 権限 : 一般
-        mUser.setAuthority(1);
+        mUser.setAuthority(UserAuthority.GENERAL.getCode());
 
         // 登録実行
         userRepository.save(mUser);
@@ -68,5 +74,28 @@ public class UserService {
      */
     public List<MUser> findAllUsers() {
         return userRepository.findAll();
+    }
+
+    /**
+     * 認証情報から現在ログイン中のユーザーを取得する
+     * 
+     * @param
+     * @return
+     * @throws
+     * @author Ritsu.Inoue
+     */
+    public MUser getCurrentUser() {
+        // SecurityContextから認証情報を取得
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        // 認証情報からユーザー詳細を取得
+        CustomUserDetails userDetails = (CustomUserDetails)auth.getPrincipal();
+        
+        // ユーザー詳細からuserIdを取得する
+        String userId = userDetails.getUsername();
+
+        // userIdを基にDBからユーザー情報を取得
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new UsernameNotFoundException("ユーザーが見つかりません"));
     }
 }
