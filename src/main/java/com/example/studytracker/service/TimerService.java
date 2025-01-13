@@ -19,7 +19,8 @@ import com.example.studytracker.repository.TimerRecordRepository;
 import lombok.RequiredArgsConstructor;
 
 /**
- * タイマー機能に関する業務ロジックを提供するサービス
+ * タイマー機能に関する業務ロジックを提供するサービスクラス
+ * タイマーの開始、停止、時間計算の機能を提供する
  * @author Ritsu.Inoue
  */
 @Service
@@ -35,6 +36,7 @@ public class TimerService {
     private final MainTaskRepository mainTaskRepository;
     private final SubTaskRepository subTaskRepository;
     private final TimerRecordRepository timerRecordRepository;
+    private final TaskCommentService taskCommentService;
 
     /**
      * タイマーを開始する
@@ -76,7 +78,7 @@ public class TimerService {
      * @author Ritsu.Inoue
      */
     @Transactional
-    public void stopTimer(Long mainTaskId, Long subTaskId, LocalDateTime stopTime) {
+    public void stopTimer(Long mainTaskId, Long subTaskId, LocalDateTime stopTime, String comment) {
         
         // メインタスクの取得と存在確認
         MainTask mainTask = mainTaskRepository.findById(mainTaskId)
@@ -90,6 +92,11 @@ public class TimerService {
         TimerRecord activeTimer = mainTask.getActivTimerRecord();
         if (activeTimer == null) {
             throw new IllegalStateException("タイマーが作動していません。メインタスクID: " + mainTaskId);
+        }
+
+        // コメントが入力されている場合のみコメントを保存
+        if (comment != null && !comment.trim().isEmpty()) {
+            taskCommentService.createComment(activeTimer, subTask, comment);
         }
         
         // アクティブタイマーとサブタスクを紐付け

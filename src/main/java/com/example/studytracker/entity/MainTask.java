@@ -8,6 +8,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * メインタスク情報を管理するエンティティクラス
+ * データベースのmain_taskテーブルとマッピングする
+ * @author Ritsu.Inoue
+ */
 @Data
 @Entity
 @Table(name = "main_task")

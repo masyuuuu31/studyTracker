@@ -16,6 +16,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * タイマー記録を管理するエンティティクラス
+ * データベースのtimer_recordsテーブルとマッピングする
+ * @author Ritsu.Inoue
+ */
 @Data
 @Entity
 @Table(name = "timer_records")

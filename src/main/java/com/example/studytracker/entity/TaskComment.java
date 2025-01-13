@@ -15,6 +15,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * タスクコメントを管理するエンティティクラス
+ * データベースのtask_commentsテーブルとマッピングする
+ * @author Ritsu.Inoue
+ */
 @Data
 @Entity
 @Table(name = "task_comments")

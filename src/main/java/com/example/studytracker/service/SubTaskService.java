@@ -12,6 +12,11 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * サブタスクに関する業務ロジックを提供するサービスクラス
+ * サブタスクの作成、更新、状態管理の機能を提供する
+ * @author Ritsu.Inoue
+ */
 @Service
 @RequiredArgsConstructor
 public class SubTaskService {
@@ -24,6 +29,7 @@ public class SubTaskService {
      * @param mainTaskId　紐付けるメインタスクのID
      * @param title　サブタスクのタイトル
      * @throws TaskNotFoundException メインタスクが存在しない場合
+     * @author Ritsu.Inoue
      */
     @Transactional
     public void createSubTask(Long mainTaskId, String title) {

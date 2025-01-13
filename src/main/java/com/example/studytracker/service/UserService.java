@@ -20,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.core.Authentication;
 
 /**
- * ユーザー関連のビジネスロジックを提供するサービスクラス
- * ユーザーの登録や存在チェックなどの機能を提供する
+ * ユーザー情報に関する業務ロジックを提供するサービスクラス
+ * ユーザーの登録、認証、情報管理の機能を提供する
  * @author Ritsu.Inoue
  */
 @Service

@@ -7,7 +7,11 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-
+/**
+ * サブタスク情報を管理するエンティティクラス
+ * データベースのsub_taskテーブルとマッピングする
+ * @author Ritsu.Inoue
+ */
 @Data
 @Entity
 @Table(name = "sub_task")

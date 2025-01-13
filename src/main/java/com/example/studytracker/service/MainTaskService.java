@@ -11,6 +11,11 @@ import com.example.studytracker.repository.MainTaskRepository;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * メインタスクに関する業務ロジックを提供するサービスクラス
+ * タスクの作成、更新、状態管理の機能を提供する
+ * @author Ritsu.Inoue
+ */
 @Service
 @RequiredArgsConstructor
 public class MainTaskService {
