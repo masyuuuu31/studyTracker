@@ -24,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 
-
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -49,7 +48,7 @@ public class AuthController {
     public String signup(@ModelAttribute UserRegistrationForm form) {
         return "auth/signup";
     }
-
+    
     /**
      * 会員登録処理を実行する
      * 

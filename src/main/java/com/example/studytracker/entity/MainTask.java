@@ -8,6 +8,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * メインタスク情報を管理するエンティティクラス
+ * データベースのmain_taskテーブルとマッピングする
+ * @author Ritsu.Inoue
+ */
 @Data
 @Entity
 @Table(name = "main_task")
@@ -31,12 +36,13 @@ public class MainTask {
     @Column(name = "percent")
     private Double percent;
 
-    @Column(name = "total_time")
-    private Double totalTime;
-
     @ManyToOne
     @JoinColumn(name = "author_id")
     private MUser author;
+
+    @OneToOne
+    @JoinColumn(name = "active_timer_id")
+    private TimerRecord activTimerRecord;
 
     @Column(name = "status")
     private Integer status;

@@ -20,8 +20,8 @@ import com.example.studytracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 /**
- * パスワードリセット機能のサービスクラス
- * トークンの生成、パスワードの再設定、トークンの管理を行う
+ * パスワードリセットに関する業務ロジックを提供するサービスクラス
+ * トークンの生成、パスワードの再設定、有効期限管理の機能を提供する
  * @author Ritsu.Inoue
  */
 @Service

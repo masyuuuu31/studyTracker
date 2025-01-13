@@ -7,13 +7,18 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-
+/**
+ * サブタスク情報を管理するエンティティクラス
+ * データベースのsub_taskテーブルとマッピングする
+ * @author Ritsu.Inoue
+ */
 @Data
 @Entity
 @Table(name = "sub_task")
 @NoArgsConstructor
 @AllArgsConstructor
 public class SubTask {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,19 +32,6 @@ public class SubTask {
     @ManyToOne
     @JoinColumn(name = "target_id")
     private MainTask target;
-
-    @ManyToOne
-    @JoinColumn(name = "author_id")
-    private MUser author;
-
-    @Column(name = "started_at")
-    private LocalDateTime startedAt;
-
-    @Column(name = "finished_at")
-    private LocalDateTime finishedAt;
-
-    @Column(name = "total_time")
-    private Double totalTime;
 
     @Column(name = "status")
     private Integer status;
